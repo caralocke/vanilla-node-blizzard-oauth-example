@@ -8,6 +8,7 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const AUTHORIZE_ENDPOINT = 'https://us.battle.net/oauth/authorize';
 const TOKEN_ENDPOINT = 'https://us.battle.net/oauth/token';
+const REDIRECT_ENDPOINT = 'http://localhost:3001'
 
 const redirectUri = 'http://localhost:3000/oauth/callback';
 const scopes = ['wow.profile'];
@@ -22,7 +23,7 @@ app.get('/login', (req, res) => {
     const scopesString = encodeURIComponent(scopes.join(' '));
     const redirectUriString = encodeURIComponent(redirectUri);
     const authorizeUrl
-        = `${AUTHORIZE_ENDPOINT}?client_id=${CLIENT_ID}&scope=${scopesString}&redirect_uri=${redirectUriString}&response_type=code`;
+        = `${AUTHORIZE_ENDPOINT}?client_id=${CLIENT_ID}&scope=${scopesString}&redirect_uri=${redirectUriString}&state=''&response_type=code`;
     res.redirect(authorizeUrl);
 });
 
@@ -59,6 +60,13 @@ app.get('/oauth/callback', async (req, res, next) => {
 
     // work with the oauth response
     const responseData = await oauthResponse.json();
+    console.log('response', responseData)
+
+    // if (!responseData.access_token) {
+    //     console.log(`You must log in with Battle.net to view this content`)
+    // } else {
+    //     res.redirect(REDIRECT_ENDPOINT)
+    // }
 
     // do something with the `access_token` from `responseData`
     // {
